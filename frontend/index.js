@@ -9,8 +9,25 @@ async function sprintChallenge5() { // Note the async keyword so you can use `aw
   // ❗ Use the variables `mentors` and `learners` to store the data.
   // ❗ Use the await keyword when using axios.
 
-  let mentors = [] // fix this
-  let learners = [] // fix this
+  let mentors = await axios.get ("http://localhost:3003/api/mentors")
+  let learners = await axios.get("http://localhost:3003/api/learners")
+  learners=learners.data
+  mentors=mentors.data
+
+  console.log(learners)
+// {
+    //const [mentorsResponse, learnersResponse] = await Promise.all([
+      //axios.get('http://localhost:3003/api/learners'), 
+      //axios.get('http://localhost:3003/api/mentors') 
+   // ]);
+// const mentorsResponse= await axios.get('http://localhost:3003/api/mentors')
+// const learnersResponse= await axios.get('http://localhost:3003/api/learners')
+// mentors = mentorsResponse.data;
+//     learners = learnersResponse.data;
+    
+//   } catch (error) {
+//     console.error('Error fetching data:', error);
+//   }
 
   // 👆 ==================== TASK 1 END ====================== 👆
 
@@ -28,14 +45,55 @@ async function sprintChallenge5() { // Note the async keyword so you can use `aw
   //     "Grace Hopper"
   //   ]`
   // }
+  learners = learners.map((learner) => {
+    return{
+      ...learner,
+      mentors: mentors
+      .filter((m) => learner.mentors.includes(m.id))
+      .map((m) => `${m.firstName} ${m.lastName}`)
+    } 
+  })
+    
+  
+console.log(learners)
+
+  //{
+    
+  //   const mentorsNames = learners.map(learner => {
+  //     return {
+  //       ...learner,
+  //       mentors: learner.mentorIds.map(mentorId => {
+         
+  //         const mentor = mentors.find(m => m.id === mentorId);
+  //         return mentor ? mentor.fullName : 'Unknown Mentor'; // Handle cases where mentor not found
+  //       })
+  //     };
+  //     return{
+  //       id: learner.id
+  //       fullName:learner.fullName
+  //       email:learner.email
+  //     }
+  //   });
+  // }
+  
+
+  // getLearnersAndMentors().then(data => {
+  //   const { learners, mentors } = data;
+    
+   
+  //   const updatedLearners = combineLearnersWithMentors(learners, mentors);
+    
+
+  //   console.log(updatedLearners);
+  // });
+
 
   // 👆 ==================== TASK 2 END ====================== 👆
 
   const cardsContainer = document.querySelector('.cards')
   const info = document.querySelector('.info')
   info.textContent = 'No learner is selected'
-
-
+  
   // 👇 ==================== TASK 3 START ==================== 👇
 
   for (let learner of learners) { // looping over each learner object
@@ -47,13 +105,37 @@ async function sprintChallenge5() { // Note the async keyword so you can use `aw
     // ❗ Fill each <li> with a mentor name, and append it to the <ul> mentorList.
     // ❗ Inspect the mock site closely to understand what the initial texts and classes look like!
 
-    const card = document.createElement('div')
-    const heading = document.createElement('h3')
-    const email = document.createElement('div')
-    const mentorsHeading = document.createElement('h4')
-    const mentorsList = document.createElement('ul')
+    
 
-    // 👆 ==================== TASK 3 END ====================== 👆
+      const card = document.createElement('div');
+      card.classList.add("card");
+      console.log(learner.fullName)
+      const heading = document.createElement('h3');
+      heading.textContent= learner.fullName;
+      card.appendChild(heading);
+      
+      const email = document.createElement('div');
+      email.textContent = learner.email;
+      card.appendChild(email);
+      
+      const mentorsHeading = document.createElement('h4');
+      mentorsHeading.classList.add("closed");
+      mentorsHeading.textContent = "Mentors";
+      card.appendChild(mentorsHeading);
+      
+      const mentorsList = document.createElement('ul');
+      for(let mentor of learner.mentors){
+        const li = document.createElement('li');
+        li.textContent =mentor;
+        mentorsList.appendChild(li)
+      }
+     
+      
+      
+  
+    
+    
+    // 👆 ==================== TASK 3 END ====================== 
 
     // 👆 WORK ONLY ABOVE THIS LINE 👆
     // 👆 WORK ONLY ABOVE THIS LINE 👆
@@ -97,6 +179,7 @@ async function sprintChallenge5() { // Note the async keyword so you can use `aw
         }
       }
     })
+    
   }
 
   const footer = document.querySelector('footer')
